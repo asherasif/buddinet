@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/login.css'%}">
+    <title>Login Page</title>
+</head>
+<body>
+    <div class="login" style="background-image: url({% static "assets/bg-image.png" %}); 
+    width:100%; 
+    background-size: cover; 
+    background-position: center;
+     background-repeat: no-repeat;">
+        <div class="loginWrapper">
+            <div class="loginLeft">
+                <h3 class="loginLogo">BuddiNet.</h3>
+                <span class="loginDesc">Connect with friends and the world around you on BuddiNet.</span>
+            </div>
+            <div class="loginRight">
+                <div class="loginBox">
+                    <input placeholder="Email" class="loginInput" />
+                    <input placeholder="Password" class="loginInput" />
+                    <button class="loginButton">Log In</button>
+                    <span class="loginForgot">Forgot Password?</span>
+                    <button class="loginRegisterButton"><a href="{% static 'signup.html' %}">Create a New Account</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
