@@ -3,14 +3,27 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
 from .models import UserProfile
+from django.contrib.auth.decorators import login_required
 # Create your views here.
+
+
+@login_required(login_url='login')
+def newsfeed(request):
+    # Your existing newsfeed code
+    return render(request, 'newsfeed.html')
+
+
+@login_required(login_url='login')
+def logout(request):
+    auth.logout(request)
+    return redirect('login')
+
+
 
 def index(request):
     return render(request,'login.html')
 
-def newsfeed(request):
-    # Your existing newsfeed code
-    return render(request, 'newsfeed.html')
+
 
 def signup(request):
 
@@ -41,6 +54,7 @@ def signup(request):
     return render(request,'signup.html')
 
 def login(request):
+
 
     if request.method == 'POST':
         username = request.POST['username']
