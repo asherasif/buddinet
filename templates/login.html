@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/login.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/login.css'%}">
     <title>Login Page</title>
 </head>
 <body>
@@ -21,13 +21,32 @@
                 <span class="loginDesc">Connect with friends and the world around you on BuddiNet.</span>
             </div>
             <div class="loginRight">
-                <div class="loginBox">
-                    <input placeholder="Email" class="loginInput" />
-                    <input placeholder="Password" class="loginInput" />
-                    <button class="loginButton">Log In</button>
-                    <span class="loginForgot">Forgot Password?</span>
-                    <button class="loginRegisterButton"><a href="{% static 'signup.html' %}">Create a New Account</a></button>
+                
+                <div>
+                    <style>
+                        h5{
+                           color: red; 
+                        }
+                    </style>
+                    {% for message in messages %}
+                    <h5>{{message}}</h5>
+                    {% endfor %}
                 </div>
+            
+
+                <form action="{% url 'login' %}" method="POST">
+
+                    {% csrf_token %}
+
+                    
+                
+                    <div class="loginBox">
+                    <input type = "text" name= "username" placeholder="Username" class="loginInput" />
+                    <input type="password" name="password" placeholder="Password" class="loginInput" />
+                    <button class="loginButton"><a>Log In</a></button>
+                    <button class="loginRegisterButton"><a href="/signup">Create a New Account</a></button>
+                    </div>
+                </form> 
             </div>
         </div>
     </div>
