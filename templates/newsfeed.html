@@ -19,6 +19,7 @@
     />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'assets/css/newsfeed.css'%}">
+    <script src="{% static 'assets/js/newsfeed.js'%}"></script>
   </head>
   <body>
       <nav>
@@ -33,7 +34,7 @@
                 </div>
                 <div class="create">
                     <div class="profile-pic">
-                        <img src="images/profile-8.jpg" alt="pic 1" />
+                        <img src="{{user_profile.profile_img.url}}" alt="p" />
                     </div>
                 </div>
             </div>
@@ -44,10 +45,10 @@
               <div class="left">
                   <a class="profile">
                       <div class="profile-pic">
-                        <img src="./images/profile-8.jpg">
+                        <img src="{{user_profile.profile_img.url}}">
                       </div>
                       <div class="handle">
-                          <h4>User</h4>
+                          <h4>{{user_profile.user.username}}</h4>
                           <p class="text-muted">BuddiNet.</p>
                       </div>
                   </a>
@@ -66,7 +67,7 @@
                       <div class="notifications-popup">
                           <div>
                               <div class="profile-pic">
-                                  <img src="./images/profile-10.jpg" >
+                                  <img src="" >
                               </div>
                               <div class="notification-body">
                                   <b>Abigail Willey</b> accepted your friend request
@@ -111,14 +112,18 @@
 
 
               <div class="middle">
-                <form class="create-post">
+                <form action="upload" method = "POST" class="create-post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="profile-pic">
-                        <img src="images/profile-8.jpg" alt="">
+                        <img src="{{user_profile.profile_img.url}}" alt="">
                     </div>
-                    <input type="text" placeholder="What's on your mind Chirag?" id="create-post">
+                    <input type="text" placeholder="What's on your mind {{user_profile.user.username}}?" id="create-post" name="text">
+                    <input type="file" name="image" id="post-image-input" style="display: none;">
+                    <label for="post-image-input" class="btn btn-primary" id="post-image">Image</label>
                     <input type="submit" value="Post" class="btn btn-primary">
                 </form>
-
+                
+                {%for post in posts reversed%}
                 <div class="feeds">
                     <div class="feed">
                         <div class="head">
@@ -126,17 +131,17 @@
                         </div>
                          <div class="user">
                              <div class="profile-pic">
-                                 <img src="images/profile-14.jpg" alt="">
+                                 <img src="{{user_profile.profile_img.url}}" alt="">
                              </div>
                              <div class="info">
-                                 <h3>Lana Rose</h3>
-                                 <small>Dubai, 15 MINUTES AGO</small>
+                                 <h3>{{post.user}}</h3>
+                                 <small>{{post.created_at}}</small>
                              </div >
                              <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
                          </div>
 
                          <div class="photo">
-                             <img src="images/feed-1.jpg" alt="">
+                             <img src="{{post.image.url}}" alt="">
                          </div>
 
                          <div class="action-button">
@@ -158,108 +163,52 @@
                          </div>
 
                          <div class="caption">
-                             <p><b>Lana Rose</b>Lorem ipsum dolor storiesquiquam eius.
-                            <span class="hash-tag">#lifestyle</span></p>
+                             <p><b>{{post.user}}</b>  {{post.text}}
                          </div>
                          <div class="comments text-muted">View all 130 comments</div>
                     </div>
-                
-                    
-                
-                    
-                
-                    <div class="feed">
-                        <div class="head">
-                            
-                        </div>
-                         <div class="user">
-                             <div class="profile-pic">
-                                 <img src="images/profile-18.jpg" alt="">
-                             </div>
-                             <div class="info">
-                                 <h3>Dan Smith</h3>
-                                 <small>Paris, 1 DAY AGO</small>
-                             </div >
-                             <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
-                         </div>
-
-                         <div class="photo">
-                             <img src="images/feed-5.jpg" alt="">
-                         </div>
-
-                         <div class="action-button">
-                             <div class="interaction-button">
-                                 <span><i class="uil uil-thumbs-up"></i></span>
-                                 <span><i class="uil uil-comment"></i></span>
-                                 <span><i class="uil uil-share"></i></span>
-                             </div>
-                             <div class="bookmark">
-                                 <span><i class="uil uil-bookmark"></i></span>
-                             </div>
-                         </div>
-
-                         <div class="liked-by">
-                             <span><img src="images/profile-9.jpg"></span>
-                             <span><img src="images/profile-11.jpg"></span>
-                             <span><img src="images/profile-13.jpg"></span>
-                             ,<p>Liked by <b>Enrest Achiever</b>snd <b>420 others</b></p>
-                         </div>
-
-                         <div class="caption">
-                             <p><b>Dan Smith</b>Lorem ipsum dolor storiesquiquam eius.
-                            <span class="hash-tag">#lifestyle</span></p>
-                         </div>
-                         <div class="comments text-muted">View all 120 comments</div>
-                    </div>
-                
-                    <div class="feed">
-                        <div class="head">
-                            
-                        </div>
-                         <div class="user">
-                             <div class="profile-pic">
-                                 <img src="images/profile-19.jpg" alt="">
-                             </div>
-                             <div class="info">
-                                 <h3>Karim Benzema</h3>
-                                 <small>Mumbai, 30 MINUTES AGO</small>
-                             </div >
-                             <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
-                         </div>
-
-                         <div class="photo">
-                             <img src="images/feed-6.jpg" alt="">
-                         </div>
-
-                         <div class="action-button">
-                             <div class="interaction-button">
-                                 <span><i class="uil uil-thumbs-up"></i></span>
-                                 <span><i class="uil uil-comment"></i></span>
-                                 <span><i class="uil uil-share"></i></span>
-                             </div>
-                             <div class="bookmark">
-                                 <span><i class="uil uil-bookmark"></i></span>
-                             </div>
-                         </div>
-
-                         <div class="liked-by">
-                             <span><img src="images/profile-15.jpg"></span>
-                             <span><img src="images/profile-14.jpg"></span>
-                             <span><img src="images/profile-17.jpg"></span>
-                             ,<p>Liked by <b>Enrest Achiever</b>snd <b>150 others</b></p>
-                         </div>
-
-                         <div class="caption">
-                             <p><b>Karim Benzema</b>Lorem ipsum dolor storiesquiquam eius.
-                            <span class="hash-tag">#lifestyle</span></p>
-                         </div>
-                         <div class="comments text-muted">View all 30 comments</div>
-                    </div>
-                    
                 </div>
+                {% endfor %} 
               </div>
               
               <div class="right">
+                <div class="friend-requests">
+                    <h4>Requests</h4>
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-pic">
+                                <img src="images/profile-13.jpg">
+                            </div>
+                            <div>
+                                <h5>Wilson Fisk</h5>
+                                <p class="text-muted">8 mutual friends</p>
+                                
+                            </div>
+                        </div>
+                        <div class="action">
+                            <button class="btn btn-primary">Accept</button>
+                            <button class="btn">Decline</button>
+                        </div>
+                    </div>
+    
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-pic">
+                                <img src="images/profile-5.jpg">
+                            </div>
+                            <div>
+                                <h5>Christ Kahea</h5>
+                                <p class="text-muted">1 mutual friend</p>
+                                
+                            </div>
+                        </div>
+                        <div class="action">
+                            <button class="btn btn-primary">Accept</button>
+                            <button class="btn">Decline</button>
+                        </div>
+                    </div>
+            
+              </div> 
                   <div class="messages">
                     <div class="heading">
                         <h4>Messages</h4>
@@ -312,52 +261,17 @@
                             <h5>Jahnvi Doifode</h5>
                             <p class="text-bold">3 New Messages</p>
                         </div>
-                    </div>                                                        
+                    <div>     
+                                                                           
                 </div>
-                <div class="friend-requests">
-                    <h4>Requests</h4>
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-pic">
-                                <img src="images/profile-13.jpg">
-                            </div>
-                            <div>
-                                <h5>Wilson Fisk</h5>
-                                <p class="text-muted">8 mutual friends</p>
-                                
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
-    
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-pic">
-                                <img src="images/profile-5.jpg">
-                            </div>
-                            <div>
-                                <h5>Christ Kahea</h5>
-                                <p class="text-muted">1 mutual friend</p>
-                                
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
-            
-              </div> 
+               
 
 
                
               </div>
           </div>
       </main>
-        <script src="assets/js/newsfeed.js"></script>
+        
   </body>
   
 </html>

@@ -2,15 +2,19 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
-from .models import UserProfile
+from .models import UserProfile,Post
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
 @login_required(login_url='login')
 def newsfeed(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = UserProfile.objects.get(user=user_object)
+
+    posts = Post.objects.all()
     # Your existing newsfeed code
-    return render(request, 'newsfeed.html')
+    return render(request, 'newsfeed.html', {'user_profile': user_profile,'posts' :posts })
 
 
 @login_required(login_url='login')
@@ -34,6 +38,7 @@ def signup(request):
         password2 = request.POST['password2']
         first_name = request.POST['firstname']
         last_name = request.POST['lastname']
+        profile_img = request.FILES.get('profile_img')
         
         if password == password2:
             if User.objects.filter(email=email).exists():
@@ -44,9 +49,10 @@ def signup(request):
                 return redirect('signup')
             else:
                 user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-                user_profile = UserProfile.objects.create(user=user, email=email, first_name=first_name, last_name=last_name)
 
+                user_profile = UserProfile.objects.create(user=user, email=email, first_name=first_name, last_name=last_name,profile_img=profile_img)
 
+                return redirect('login')
         else:
             messages.info(request,"Password Not Matching")
             return redirect('signup')
@@ -71,3 +77,21 @@ def login(request):
         
     else:
      return render(request,'login.html')
+    
+
+@login_required(login_url='login')
+def upload(request):
+
+    if(request.method == 'POST'):
+       user = request.user.username
+       image = request.FILES.get('image')
+       text = request.POST['text']
+
+       new_post = Post.objects.create(user=user,image=image,text=text)
+       new_post.save()
+
+       return redirect('newsfeed')
+
+    else:
+        return redirect('/')
+   

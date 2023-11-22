@@ -98,3 +98,21 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+.btn{
+    display: inline-block;
+    padding: var(--btn-padding);
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 300ms ease;
+}
+
+.btn:hover{
+    opacity: 0.8;
+}
+
+.btn-primary{
+    background: var(--color-primary);
+    color: white;
+}
