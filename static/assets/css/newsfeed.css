@@ -514,3 +514,7 @@
         }
     }
 
+    .middle .feed .action-button .interaction-button .button {
+        cursor: pointer;
+        margin-right: 10px; /* Adjust the spacing between buttons if needed */
+    }

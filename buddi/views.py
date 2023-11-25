@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
-from .models import UserProfile,Post
+from .models import UserProfile,Post,LikePost
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -94,4 +94,27 @@ def upload(request):
 
     else:
         return redirect('/')
-   
+
+
+
+@login_required(login_url='login')
+def like_post(request):
+    username = request.user.username
+    post_id = request.GET.get('post_id')
+
+    post = Post.objects.get(id=post_id)
+    like_check = LikePost.objects.filter(post_id=post_id,username=username).first()
+
+    if like_check == None:
+       new_like = LikePost.objects.create(post_id = post_id, username=username)
+       new_like.save()
+       post.no_of_likes = post.no_of_likes+1
+       post.save()
+       return redirect('newsfeed')
+    else:
+      like_check.delete()
+      post.no_of_likes = post.no_of_likes-1
+      post.save()
+      return redirect('newsfeed')
+       
+

@@ -8,5 +8,6 @@ urlpatterns = [
     path('newsfeed', views.newsfeed, name='newsfeed'),
     path('logout', views.logout, name='logout'),
     path('upload',views.upload,name='upload'),
+    path('like_post',views.like_post,name='like_post'),
 ]
 
