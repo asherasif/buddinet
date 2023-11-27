@@ -1,6 +1,8 @@
 from django.db import models,connection
-from django.contrib.auth import get_user_model
-import uuid
+from django.conf import settings
+
+from django.contrib.auth import get_user_model #DJANGOS DEFUALT USER MODEL TO HANDLE AUTHENTIFIACTION AND OTHER MAJOR TASKS
+import uuid  
 from datetime import datetime
 User = get_user_model()
 
@@ -14,7 +16,9 @@ class UserProfile(models.Model):
     first_name = models.CharField(max_length=100,default='')
     last_name = models.CharField(max_length=100,default='')
     def __str__(self):
-      return f'{self.user.username} (ID: {self.user.id})'
+      return f'{self.user.username} (ID: {self.user.id})' #Displays 'username' from 'User' object. "User" is djangos base class for handling users. we created a 'userprofile' from it.
+
+''' ASHERS ORIGNAL WORK
 
 
 class Post(models.Model):
@@ -26,8 +30,21 @@ class Post(models.Model):
    no_of_likes = models.IntegerField(default=0)
 
    def __str__(self):
-      return self.user
-   
+      return self.user 
+
+'''
+
+class Post(models.Model):
+   id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+   image = models.ImageField(upload_to='post images')
+   text = models.TextField()
+   created_at = models.DateTimeField(default=datetime.now)
+   no_of_likes = models.IntegerField(default=0)
+
+   def __str__(self):
+      return f'Post by {self.user.username}'
+
 
 class LikePost(models.Model):
    post_id = models.CharField(max_length=100)   
@@ -35,5 +52,4 @@ class LikePost(models.Model):
 
    def __str__(self):
       return self.username
-
 

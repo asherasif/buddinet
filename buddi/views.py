@@ -78,7 +78,7 @@ def login(request):
     else:
      return render(request,'login.html')
     
-
+'''
 @login_required(login_url='login')
 def upload(request):
 
@@ -95,6 +95,21 @@ def upload(request):
     else:
         return redirect('/')
 
+'''
+@login_required(login_url='login')
+def upload(request):
+    if request.method == 'POST':
+        image = request.FILES.get('image')
+        text = request.POST['text']
+
+        # [Posts --> user] requires the whole User instance (ie the curreently logged in user ka instance and not just the ID)
+        # ab ye [user=request.user] directly apko currently logged in walay ka instance poora dedeta hai, Django khud usmein se ID nikalta hai
+        new_post = Post.objects.create(user=request.user, image=image, text=text)
+        # No need to call save() as create() already saves the object
+        return redirect('newsfeed')
+
+    else:
+        return redirect('/')
 
 
 @login_required(login_url='login')
@@ -116,5 +131,3 @@ def like_post(request):
       post.no_of_likes = post.no_of_likes-1
       post.save()
       return redirect('newsfeed')
-       
-

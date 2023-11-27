@@ -35,7 +35,7 @@
                 </div>
                 <div class="create">
                     <div class="profile-pic">
-                        <img src="{{user_profile.profile_img.url}}" alt="p" />
+                        <img src="" alt="p" />
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
               <div class="left">
                   <a class="profile">
                       <div class="profile-pic">
-                        <img src="{{user_profile.profile_img.url}}">
+                        <img src="">
                       </div>
                       <div class="handle">
                           <h4>{{user_profile.user.username}}</h4>
@@ -116,7 +116,7 @@
                 <form action="upload" method = "POST" class="create-post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="profile-pic">
-                        <img src="{{user_profile.profile_img.url}}" alt="">
+                        <img src="" alt="">
                     </div>
                     <input type="text" placeholder="What's on your mind {{user_profile.user.username}}?" id="create-post" name="text">
                     <input type="file" name="image" id="post-image-input" style="display: none;">
@@ -132,7 +132,7 @@
                         </div>
                          <div class="user">
                              <div class="profile-pic">
-                                 <img src="{{user_profile.profile_img.url}}" alt="">
+                                 <img src="" alt="">
                              </div>
                              <div class="info">
                                  <h3>{{post.user}}</h3>
