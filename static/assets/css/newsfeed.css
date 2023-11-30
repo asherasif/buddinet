@@ -89,12 +89,15 @@
         
     
     }
+
+
     
     nav .container{
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
+
     
     .search-bar{
         background: var(--color-light);

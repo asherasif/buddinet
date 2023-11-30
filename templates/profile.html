@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - {{user_profile.user.username}}</title>
+  <!-- Font Awesome -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/profile.css'%}" />
+  <link rel="stylesheet" href="{% static 'assets/css/profile1.css'%}" />
+</head>
+<body>
+  <div class="header__wrapper">
+    <header>
+      <img src="{% static "assets/cover.jpg" %}" alt="" style="width:100%; 
+      background-size: cover; 
+      background-position: center;"/>
+    </header>
+    <div class="cols__container">
+      <div class="left__col">
+        <div class="img__container">
+          <img src="https://scontent.fkhi21-1.fna.fbcdn.net/v/t39.30808-1/361650012_6488201154606816_4125856854135565153_n.jpg?stp=dst-jpg_p160x160&_nc_cat=107&ccb=1-7&_nc_sid=5740b7&_nc_eui2=AeGW6CW1GccFr1SyGRGC2RZQzIXX_DZmxZzMhdf8NmbFnIX31ahN4t9lqZ2DUevWM6-IEqzCl2bVDtWBn5XPLwj1&_nc_ohc=ZFZoCTxO1rsAX_mQkoe&_nc_ht=scontent.fkhi21-1.fna&oh=00_AfArc1nIGW9lW9-Rza6evFqg2yX0QbxgkxSLDq2QZLc3yg&oe=656C1700" alt="a" />
+          <span></span>
+        </div>
+        <h2>{{user_profile.user.username}}</h2>
+        <p>BuddiNet.</p>
+        <p>{{user_profile.email}}</p>
+        <ul class="about">
+          <li><span>{{follower_count}}</span>Followers</li>
+          <li><span>{{following_count}}</span>Following</li>
+          <li><span>{{user_post_len}}</span>Posts</li>
+        </ul>
+        <div class="content">
+          <p>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam
+            erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl
+            ligula egestas nulla.
+          </p>
+          <ul>
+            <li><i class="fab fa-twitter"></i></li>
+            <i class="fab fa-pinterest"></i>
+            <i class="fab fa-facebook"></i>
+            <i class="fab fa-dribbble"></i>
+          </ul>
+        </div>
+      </div>
+      <div class="right__col">
+        <nav>
+          <ul>
+            <li><a href="">Posts</a></li>
+          </ul>
+
+          <form action="/follow" method = 'POST' >
+          {% csrf_token %}
+
+          <input type="hidden" value="{{user.username}}" name="follower" />
+
+          <input type="hidden" value="{{user_profile.user.username}}" name="user_to_follow" />
+
+          {% if user_profile.user.username != user.username %}
+          <button type="submit">{{btn_text}}</button>
+          {% endif %}
+          </form>
+        </nav>
+        <div class="photos">
+          {% for post in user_posts reversed %}
+            <div class="post-container {% if forloop.first %} first-post{% endif %}">
+              <div class="post-header">
+                <img class="profile-pic" src="https://scontent.fkhi21-1.fna.fbcdn.net/v/t39.30808-1/361650012_6488201154606816_4125856854135565153_n.jpg?stp=dst-jpg_p160x160&_nc_cat=107&ccb=1-7&_nc_sid=5740b7&_nc_eui2=AeGW6CW1GccFr1SyGRGC2RZQzIXX_DZmxZzMhdf8NmbFnIX31ahN4t9lqZ2DUevWM6-IEqzCl2bVDtWBn5XPLwj1&_nc_ohc=ZFZoCTxO1rsAX_mQkoe&_nc_ht=scontent.fkhi21-1.fna&oh=00_AfArc1nIGW9lW9-Rza6evFqg2yX0QbxgkxSLDq2QZLc3yg&oe=656C1700" alt="Profile Picture" />
+                <div class="username">{{user_profile.user.username}}</div>
+              </div>
+              <img class="post-image" src="{{post.image.url}}" alt="Post Image" />
+              <div class="post-caption">
+                <span class="username">{{user_profile.user.username}}</span>
+                {{post.text}}
+              </div>
+              <div class="post-footer">
+                <span class="like-comment">❤️ {{post.no_of_likes}} likes</span>
+                <span class="like-comment">💬 10 comments</span>
+              </div>
+            </div>
+            
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

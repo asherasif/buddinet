@@ -2,8 +2,9 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
-from .models import UserProfile,Post,LikePost
+from .models import UserProfile,Post,LikePost,Followers
 from django.contrib.auth.decorators import login_required
+from itertools import chain
 # Create your views here.
 
 
@@ -12,9 +13,20 @@ def newsfeed(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = UserProfile.objects.get(user=user_object)
 
-    posts = Post.objects.all()
-    # Your existing newsfeed code
-    return render(request, 'newsfeed.html', {'user_profile': user_profile,'posts' :posts })
+    # Fetch users the current user is following
+    user_follow_list = Followers.objects.filter(follower=request.user.username).values_list('user', flat=True)
+
+     # Include the current user in the list
+    user_follow_list = list(user_follow_list)
+    user_follow_list.append(request.user.username)
+
+    # Fetch posts from the users the current user is following
+    feed_lists = Post.objects.filter(user__username__in=user_follow_list)
+
+    # Order the posts by timestamp or any other criteria you desire
+    feed_lists = feed_lists.order_by('created_at')
+
+    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists})
 
 
 @login_required(login_url='login')
@@ -131,3 +143,53 @@ def like_post(request):
       post.no_of_likes = post.no_of_likes-1
       post.save()
       return redirect('newsfeed')
+
+@login_required(login_url='login')
+def profile(request, pk):
+
+    user_object= User.objects.get(username=pk)
+    user_profile = UserProfile.objects.get(user=user_object)
+    user_posts = Post.objects.filter(user=user_object)
+    user_post_len = len(user_posts)
+
+
+    follower = request.user.username
+    user_to_follow = pk
+
+    if Followers.objects.filter(follower = follower, user = user_to_follow).first():
+        btn_text = "Unfollow"
+    else:
+        btn_text = "Follow" 
+
+    follower_count = len(Followers.objects.filter(user = pk))       
+    following_count = len(Followers.objects.filter(follower = pk))       
+
+    context = {
+        'user_object': user_object,
+        'user_profile': user_profile,
+        'user_posts': user_posts,
+        'user_post_len' : user_post_len,
+        'btn_text' : btn_text,
+        'follower_count':follower_count,
+        'following_count': following_count
+    }
+
+    return render(request,'profile.html',context)
+
+@login_required(login_url='login')
+def follow(request):
+    if request.method == 'POST':
+        follower = request.user.username
+        user_to_follow = request.POST['user_to_follow']
+
+        if Followers.objects.filter(follower = follower, user = user_to_follow).exists():
+            delete_follow = Followers.objects.get(follower = follower, user = user_to_follow)
+            delete_follow.delete()
+        else:
+            new_follow = Followers.objects.create(follower = follower, user = user_to_follow)
+            new_follow.save()
+
+        return redirect('/profile/'+user_to_follow)
+    else:
+        return redirect('/profile/'+user_to_follow)
+    
