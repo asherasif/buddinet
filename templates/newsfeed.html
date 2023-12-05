@@ -2,283 +2,170 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width= , initial-scale=1.0" />
     <title>BuddiNet - Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'assets/css/newsfeed.css'%}">
     <script src="{% static 'assets/js/newsfeed.js'%}"></script>
     <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
-  </head>
-  <body>
-      <nav>
+</head>
+
+<body>
+    <nav>
+        <form action="search" method="POST">
+            {% csrf_token %}
             <div class="container">
                 <h2 class="logo">BuddiNet.</h2>
                 <div class="search-bar">
-                    <i class="uil uil-search"></i>
-                    <input
-                    type="search"
-                    placeholder="Search for creators, inspirations and projects"
-                    />
+                    <input type="search" name="username" placeholder="Search for Users" />
+                    <button class="btn" type="submit"><i class="uil uil-search"></i></button>
                 </div>
                 <div class="create">
                     <div class="profile-pic">
-                        <img src="" alt="p" />
+                        <img src="{% static 'assets/blank-profile-pic.png' %}" alt="p" />
                     </div>
                 </div>
             </div>
-      </nav>
+        </form>
+    </nav>
 
-      <main>
-          <div class="container">
-              <div class="left">
-                  <a class="profile">
-                      <div class="profile-pic">
-                        <img src="">
-                      </div>
-                      <div class="handle">
-                          <h4>{{user_profile.user.username}}</h4>
-                          <p class="text-muted">BuddiNet.</p>
-                      </div>
-                  </a>
-                  <div class="sidebar">
+    <main>
+        <div class="container">
+            <div class="left">
+                <a class="profile">
+                    <div class="profile-pic">
+                        <img src="{% static 'assets/blank-profile-pic.png' %}">
+                    </div>
+                    <div class="handle">
+                        <h4>{{user_profile.user.username}}</h4>
+                        <p class="text-muted">BuddiNet.</p>
+                    </div>
+                </a>
+                <div class="sidebar">
                     <a class="menu-item active">
-                      <span><i class="uil uil-home"></i></span> <h3>Home</h3>
+                        <span><i class="uil uil-home"></i></span>
+                        <h3>Home</h3>
                     </a>
                     <a class="menu-item " href="{% url 'profile' pk=user_profile.user.username %}">
-                      <span><i class="fa fa-user" aria-hidden="true"></i></span> <h3>Profile</h3>
+                        <span><i class="fa fa-user" aria-hidden="true"></i></span>
+                        <h3>Profile</h3>
                     </a>
-                    <a class="menu-item" href = 'logout'>
-                        <span><i class="fas fa-sign-out-alt"></i></span> <h3>Logout</h3>
-                      </a>
-                    <a class="menu-item" id="notifications">
-                      <span><i class="uil uil-bell"><small class="notification-count">9+</small></i></span> <h3>Notifications</h3>
-                      <div class="notifications-popup">
-                          <div>
-                              <div class="profile-pic">
-                                  <img src="" >
-                              </div>
-                              <div class="notification-body">
-                                  <b>Abigail Willey</b> accepted your friend request
-                                  <small class="text-muted">2 DAYS AGO</small>
-                              </div>
-                          </div>
-                          <div>
-                              <div class="profile-pic">
-                                  <img src="./images/profile-11.jpg" >
-                              </div>
-                              <div class="notification-body">
-                                  <b>Varun Nair</b> commented on your post
-                                  <small class="text-muted">1 HOUR AGO</small>
-                              </div>
-                          </div>
-                          <div>
-                              <div class="profile-pic">
-                                  <img src="./images/profile-12.jpg" >
-                              </div>
-                              <div class="notification-body">
-                                  <b>Marry Opmong</b> and 210 other liked your post
-                                  <small class="text-muted">4 MINUTES AGO</small>
-                              </div>
-                          </div>
-                          <div>
-                              <div class="profile-pic">
-                                  <img src="./images/profile-13.jpg" >
-                              </div>
-                              <div class="notification-body">
-                                  <b>Wilson Fisk</b> started following you
-                                  <small class="text-muted"> 11 HOURS AGO</small>
-                              </div>
-                          </div>
-                      </div>
+                    <a class="menu-item" href='logout'>
+                        <span><i class="fas fa-sign-out-alt"></i></span>
+                        <h3>Logout</h3>
                     </a>
-            
-                        
+
                     </a>
                 </div>
-              </div>
-              
+            </div>
 
 
-              <div class="middle">
-                <form action="upload" method = "POST" class="create-post" enctype="multipart/form-data">
+
+            <div class="middle">
+                <form action="upload" method="POST" class="create-post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="profile-pic">
                         <img src="" alt="">
                     </div>
-                    <input type="text" placeholder="What's on your mind {{user_profile.user.username}}?" id="create-post" name="text">
+                    <input type="text" placeholder="What's on your mind {{user_profile.user.username}}?"
+                        id="create-post" name="text">
                     <input type="file" name="image" id="post-image-input" style="display: none;">
                     <label for="post-image-input" class="btn btn-primary" id="post-image">Image</label>
                     <input type="submit" value="Post" class="btn btn-primary">
                 </form>
-                
+
                 {%for post in posts reversed%}
                 <div class="feeds">
                     <div class="feed">
                         <div class="head">
-                            
+
                         </div>
-                         <div class="user">
-                             <div class="profile-pic">
-                                 <img src="" alt="">
-                             </div>
-                             <div class="info">
-                                 <h3><a href="{% url 'profile' pk=post.user.username %}">{{ post.user }}</a></h3>
-                                 <small>{{post.created_at}}</small>
-                             </div >
-                             <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
-                         </div>
+                        <div class="user">
+                            <div class="profile-pic">
+                                <img src="{% static 'assets/blank-profile-pic.png' %}" alt="">
+                            </div>
+                            <div class="info">
+                                <h3><a href="{% url 'profile' pk=post.user.username %}">{{ post.user }}</a></h3>
+                                <small>{{post.created_at}}</small>
+                            </div>
+                            <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
+                        </div>
 
-                         <div class="photo">
-                             <img src="{{post.image.url}}" alt="">
-                         </div>
+                        <div class="photo">
+                            <img src="{{post.image.url}}" alt="">
+                        </div>
 
-                         <div class="action-button">
+                        <div class="action-button">
                             <div class="interaction-button">
-                                <a href="/like_post?post_id={{post.id}}" class="button"><i class="uil uil-thumbs-up"></i></a>
+                                <a href="/like_post?post_id={{post.id}}" class="button"><i
+                                        class="uil uil-thumbs-up"></i></a>
                                 <a href="#" class="button"><i class="uil uil-comment"></i></a>
+                            </div>
+                            <div class="bookmark">
                                 <a href="#" class="button"><i class="uil uil-share"></i></a>
                             </div>
-                             <div class="bookmark">
-                                 <span><i class="uil uil-bookmark"></i></span>
-                             </div>
-                         </div>
+                        </div>
 
-                         <div class="liked-by">
-                        
-                             {% if post.no_of_likes == 0%}
-                             <p><b>0 Likes</b></p>
-                             {% elif post.no_of_likes == 1 %}
-                             <p><b>1 Like</b></p>
-                             {% else %} 
-                             <p><b>{{post.no_of_likes}} Likes</b></p>
-                             {% endif %}
-                             
+                        <div class="liked-by">
 
-                         </div>
+                            {% if post.no_of_likes == 0%}
+                            <p><b>0 Likes</b></p>
+                            {% elif post.no_of_likes == 1 %}
+                            <p><b>1 Like</b></p>
+                            {% else %}
+                            <p><b>{{post.no_of_likes}} Likes</b></p>
+                            {% endif %}
 
-                         <div class="caption">
-                             <p><b><a href="{% url 'profile' pk=post.user.username %}">{{ post.user }}</a></b>  {{post.text}}
-                         </div>
-                         <div class="comments text-muted">View all 130 comments</div>
+
+                        </div>
+
+                        <div class="caption">
+                            <p><b><a href="{% url 'profile' pk=post.user.username %}">{{ post.user }}</a></b>
+                                {{post.text}}
+                        </div>
+                            <div class="feeds feed user middle" style="border: 2px solid grey;border-radius: 40px;">
+                                <input type="text" placeholder="Write a comment {{user_profile.user.username}}?"
+                                    id="create-post" name="text" style="width: 90%;">
+                                <input type="submit" value="Post" class="btn btm-small" style="margin-left: 220px;">
+                            </div>
                     </div>
                 </div>
-                {% endfor %} 
-              </div>
-              
-              <div class="right">
+                {% endfor %}
+            </div>
+
+            <div class="right">
                 <div class="friend-requests">
-                    <h4>Requests</h4>
+                    <h4>Suggestions</h4>
+                    {% for sugg in suggestions_list %}
                     <div class="request">
                         <div class="info">
                             <div class="profile-pic">
-                                <img src="images/profile-13.jpg">
+                                <img src="{% static 'assets/blank-profile-pic.png' %}">
                             </div>
                             <div>
-                                <h5>Wilson Fisk</h5>
-                                <p class="text-muted">8 mutual friends</p>
-                                
+                                <h5>{{sugg.user}}</h5>
+                                <p class="text-muted">BuddiNet User.</p>
+
                             </div>
                         </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
+                        <div class="action" style="align-items: center; justify-content: center;">
+                            
+                            <button class="btn"><a href="/profile/{{sugg.user}}" style="align-items: center; justify-content: center;">View Profile</a></button>
                         </div>
                     </div>
-    
-                    <div class="request">
-                        <div class="info">
-                            <div class="profile-pic">
-                                <img src="images/profile-5.jpg">
-                            </div>
-                            <div>
-                                <h5>Christ Kahea</h5>
-                                <p class="text-muted">1 mutual friend</p>
-                                
-                            </div>
-                        </div>
-                        <div class="action">
-                            <button class="btn btn-primary">Accept</button>
-                            <button class="btn">Decline</button>
-                        </div>
-                    </div>
-            
-              </div> 
-                  <div class="messages">
-                    <div class="heading">
-                        <h4>Messages</h4>
-                        <span><i class="uil uil-edit"></i></span>
-                    </div>
-  
-                    <div class="search-bar">
-                        <span><i class="uil uil-search"></i></span>
-                        <input type="search" placeholder="Search Messages" id="message-search">
-                    </div>
-  
-                    <div class="category">
-                        <h6 class="active">Primary</h6>
-                    </div>
-                    <div class="message">
-                        <div class="profile-pic">
-                            <img src="images/profile-17.jpg">
-                            <div class="active"></div>
-                        </div>
-                        <div class="message-body">
-                            <h5>Kareena Joshua</h5>
-                            <p class="text-muted">Just woke up bruh..</p>
-                        </div>
-                    </div>                             
-                       
-                    <div class="message">
-                        <div class="profile-pic">
-                            <img src="images/profile-14.jpg">
-                        </div>
-                        <div class="message-body">
-                            <h5>Lana Rose</h5>
-                            <p class="text-bold">Birthday tomorrow!!</p>
-                        </div>
-                    </div>                             
-                    <div class="message">
-                        <div class="profile-pic">
-                            <img src="images/profile-11.jpg">
-                        </div>
-                        <div class="message-body">
-                            <h5>Varun Nair</h5>
-                            <p class="text-muted">Ssup?</p>
-                        </div>
-                    </div>                             
-                    <div class="message">
-                        <div class="profile-pic">
-                            <img src="images/profile-1.jpg">
-                            <div class="active"></div>
-                        </div>
-                        <div class="message-body">
-                            <h5>Jahnvi Doifode</h5>
-                            <p class="text-bold">3 New Messages</p>
-                        </div>
-                    <div>     
-                                                                           
+                    {% endfor %}
                 </div>
-               
+                
+    </main>
 
+</body>
 
-               
-              </div>
-          </div>
-      </main>
-        
-  </body>
-  
 </html>

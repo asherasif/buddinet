@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import UserProfile,Post,LikePost,Followers
 from django.contrib.auth.decorators import login_required
 from itertools import chain
+import random
 # Create your views here.
 
 
@@ -15,18 +16,44 @@ def newsfeed(request):
 
     # Fetch users the current user is following
     user_follow_list = Followers.objects.filter(follower=request.user.username).values_list('user', flat=True)
-
-     # Include the current user in the list
+    # Include the current user in the list
     user_follow_list = list(user_follow_list)
     user_follow_list.append(request.user.username)
-
     # Fetch posts from the users the current user is following
     feed_lists = Post.objects.filter(user__username__in=user_follow_list)
-
     # Order the posts by timestamp or any other criteria you desire
     feed_lists = feed_lists.order_by('created_at')
 
-    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists})
+    #User Suggestions
+    all_possible_users = User.objects.all()
+    current_user_following = []
+
+    for user in user_follow_list:
+        list_user = User.objects.get(username = user)
+        current_user_following.append(list_user)
+
+    suggestions = [i for i in list(all_possible_users) if (i not in list(current_user_following))]
+
+    current_user_avoid = User.objects.filter(username = request.user.username)
+
+    final_suggestions = [i for i in list(suggestions) if (i not in list(current_user_avoid))]
+    random.shuffle(final_suggestions)
+    
+    username_profile = []
+    username_profile_list = []      
+
+    for usernames in final_suggestions:
+        username_profile.append(usernames.id)
+
+    for idd in username_profile:
+        profiles = UserProfile.objects.filter(user__id = idd)
+        username_profile_list.append(profiles)
+
+
+    suggestions_list = list(chain(*username_profile_list)) 
+
+
+    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists,'suggestions_list': suggestions_list[:3]})
 
 
 @login_required(login_url='login')
@@ -121,7 +148,7 @@ def upload(request):
         return redirect('newsfeed')
 
     else:
-        return redirect('/')
+        return redirect('newsfeed')
 
 
 @login_required(login_url='login')
@@ -192,4 +219,29 @@ def follow(request):
         return redirect('/profile/'+user_to_follow)
     else:
         return redirect('/profile/'+user_to_follow)
-    
+
+
+
+
+@login_required(login_url='login')
+def search(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = UserProfile.objects.get(user = user_object)
+
+    if request.method == 'POST':
+       username = request.POST['username']
+       username_obj = User.objects.filter(username__icontains=username)
+       
+       username_profile = []
+       username_profile_list = []      
+
+       for usernames in username_obj:
+           username_profile.append(usernames.id)
+
+       for idd in username_profile:
+        profiles = UserProfile.objects.filter(user__id = idd)
+        username_profile_list.append(profiles)
+
+       username_profile_list = list(chain(*username_profile_list))     
+
+    return render(request,'search.html',{'user_profile': user_profile,'username_profile_list': username_profile_list})

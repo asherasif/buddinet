@@ -1,0 +1,64 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/search.css'%}">
+</head>
+
+<body>
+    <nav>
+        <form action="search" method="POST">
+            {% csrf_token %}
+            <div class="container">
+                <h2 class="logo">BuddiNet.</h2>
+                <div class="search-bar">
+                    <input
+                    type="search" name = "username"
+                    placeholder="Search for Users"
+                    />
+                    <button  class="btn"    type="submit"><i class="uil uil-search"></i></button>
+                </div>
+                <div class="create">
+                    <div class="profile-pic">
+                        <img src="{% static 'assets/blank-profile-pic.png' %}" alt="p" />
+                    </div>
+                </div>
+            </div>
+        </form>
+      </nav>
+
+    <div class="middle">
+        <div class="feeds">
+            {% for users in username_profile_list %}
+            <div class="feed">   
+                <div class="user">
+                    <div class="profile-pic">
+                        <img src="{% static 'assets/blank-profile-pic.png' %}" alt="A">
+                    </div>
+                    <div class="info">
+                        <h3><a href="/profile/{{users.user}}">{{users.user}}</a></h3>
+                    </div>
+
+                    <div class="caption">
+                        <p><b>Bio Comes Here</b></p>
+                    </div>
+                </div>  
+            </div>
+            {% endfor %}
+            
+        </div>
+    </div>
+</body>
+
+</html>

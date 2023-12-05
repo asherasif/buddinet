@@ -50,10 +50,11 @@
       </div>
       <div class="right__col">
         <nav>
+          
           <ul>
             <li><a href="">Posts</a></li>
           </ul>
-
+          <button class="btn"><a class="btn" href="/newsfeed">Go To Newsfeed</a></button>
           <form action="/follow" method = 'POST' >
           {% csrf_token %}
 
@@ -65,6 +66,7 @@
           <button type="submit">{{btn_text}}</button>
           {% endif %}
           </form>
+          
         </nav>
         <div class="photos">
           {% for post in user_posts reversed %}
