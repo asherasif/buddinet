@@ -18,12 +18,12 @@ class LikePostAdmin(admin.ModelAdmin):
     search_fields = ('post_id','username')  
 
 class FollowersAdmin(admin.ModelAdmin):
-    list_display = ('connection_id','follower','user')
-    search_fields = ('connection_id','follower','user')
+    list_display = ('connection_id','follower','followed')
+    search_fields = ('connection_id','follower','followed')
 
 class CommentsAdmin(admin.ModelAdmin):
-    list_display = ('comment_id','post_id','text','username')
-    search_fields = ('comment_id','post_id','username','text')            
+    list_display = ('comment_id','post_id','text','user')
+    search_fields = ('comment_id','post_id','user','text')            
 
 
 admin.site.register(UserProfile,UserProfileAdmin)

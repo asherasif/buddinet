@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
@@ -11,55 +11,40 @@ import random
 
 @login_required(login_url='login')
 def newsfeed(request):
-    user_object = User.objects.get(username=request.user.username)
+    user_object = request.user
     user_profile = UserProfile.objects.get(user=user_object)
 
-    # Fetch users the current user is following
-    user_follow_list = Followers.objects.filter(follower=request.user.username).values_list('user', flat=True)
-    # Include the current user in the list
-    user_follow_list = list(user_follow_list)
-    user_follow_list.append(request.user.username)
-    # Fetch posts from the users the current user is following
-    feed_lists = Post.objects.filter(user__username__in=user_follow_list).prefetch_related('comments1')
+    # Fetch user IDs of users the current user is following
+    following_user_ids = Followers.objects.filter(follower=user_object).values_list('followed_id', flat=True)
 
-    # Order the posts by timestamp or any other criteria you desire
-    feed_lists = feed_lists.order_by('created_at')
+    # Include the current user's ID in the list
+    user_ids = list(following_user_ids) + [user_object.id]
 
-    #User Suggestions
-    all_possible_users = User.objects.all()
-    current_user_following = []
+    # Fetch posts from the users the current user is following, including their own
+    feed_lists = Post.objects.filter(user_id__in=user_ids).prefetch_related('comments1').order_by('-created_at')
 
-    for user in user_follow_list:
-        list_user = User.objects.get(username = user)
-        current_user_following.append(list_user)
-
-    suggestions = [i for i in list(all_possible_users) if (i not in list(current_user_following))]
-
-    current_user_avoid = User.objects.filter(username = request.user.username)
-
-    final_suggestions = [i for i in list(suggestions) if (i not in list(current_user_avoid))]
-    random.shuffle(final_suggestions)
+    # User Suggestions Logic
+    all_possible_users = User.objects.exclude(id=user_object.id)
+    followed_users = User.objects.filter(id__in=user_ids)
+    suggestions = all_possible_users.difference(followed_users)
     
-    username_profile = []
-    username_profile_list = []      
+    # Randomize user suggestions
+    final_suggestions = list(suggestions)
+    random.shuffle(final_suggestions)
 
-    for usernames in final_suggestions:
-        username_profile.append(usernames.id)
+    # Fetch user profiles for suggestions
+    username_profile_list = UserProfile.objects.filter(user__in=final_suggestions[:3])
 
-    for idd in username_profile:
-        profiles = UserProfile.objects.filter(user__id = idd)
-        username_profile_list.append(profiles)
-
-
-    suggestions_list = list(chain(*username_profile_list))
-
-
-    #Comments on Post
-    user_posts = Post.objects.filter(user=request.user)
+    # Comments on Post
+    user_posts = Post.objects.filter(user=user_object)
     comments_list = comments.objects.filter(post__in=user_posts).order_by('post__created_at')
 
-
-    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists,'suggestions_list': suggestions_list[:3],'comments_list':comments_list})
+    return render(request, 'newsfeed.html', {
+        'user_profile': user_profile, 
+        'posts': feed_lists,
+        'suggestions_list': username_profile_list,
+        'comments_list': comments_list
+    })
 
 
 @login_required(login_url='login')
@@ -177,55 +162,86 @@ def like_post(request):
       post.save()
       return redirect('newsfeed')
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import get_user_model
+from .models import UserProfile, Post, Followers
+
+User = get_user_model()
+
 @login_required(login_url='login')
 def profile(request, pk):
-
-    user_object= User.objects.get(username=pk)
+    user_object = get_object_or_404(User, username=pk)
     user_profile = UserProfile.objects.get(user=user_object)
     user_posts = Post.objects.filter(user=user_object)
     user_post_len = len(user_posts)
 
-
-    follower = request.user.username
-    user_to_follow = pk
-
-    if Followers.objects.filter(follower = follower, user = user_to_follow).first():
+    # Check if the current user is following the profile user
+    if Followers.objects.filter(follower=request.user, followed=user_object).exists():
         btn_text = "Unfollow"
     else:
-        btn_text = "Follow" 
+        btn_text = "Follow"
 
-    follower_count = len(Followers.objects.filter(user = pk))       
-    following_count = len(Followers.objects.filter(follower = pk))       
+    # Count the number of followers and followings
+    follower_count = Followers.objects.filter(followed=user_object).count()
+    following_count = Followers.objects.filter(follower=user_object).count()
 
     context = {
         'user_object': user_object,
         'user_profile': user_profile,
         'user_posts': user_posts,
-        'user_post_len' : user_post_len,
-        'btn_text' : btn_text,
-        'follower_count':follower_count,
+        'user_post_len': user_post_len,
+        'btn_text': btn_text,
+        'follower_count': follower_count,
         'following_count': following_count
     }
 
-    return render(request,'profile.html',context)
+    return render(request, 'profile.html', context)
 
+ 
+
+def follow(request):
+    if request.method == 'POST':
+        follower = request.user  # The current logged-in user
+        username_to_follow = request.POST.get('user_to_follow')  # Username of the user to follow/unfollow
+
+        # Get the User object for the user to follow
+        user_to_follow = get_object_or_404(User, username=username_to_follow)
+
+        # Check if the follow relationship already exists
+        existing_follow = Followers.objects.filter(follower=follower, followed=user_to_follow)
+        if existing_follow.exists():
+            # Unfollow logic: If they already follow, unfollow (delete the relationship)
+            existing_follow.delete()
+        else:
+            # Follow logic: Create a new follow relationship
+            Followers.objects.create(follower=follower, followed=user_to_follow)
+
+        return redirect('/profile/' + username_to_follow)
+    else:
+        return redirect('/profile/' + request.POST.get('user_to_follow', ''))
+
+
+
+
+'''
 @login_required(login_url='login')
 def follow(request):
     if request.method == 'POST':
-        follower = request.user.username
+        follower = request.user
         user_to_follow = request.POST['user_to_follow']
 
         if Followers.objects.filter(follower = follower, user = user_to_follow).exists():
-            delete_follow = Followers.objects.get(follower = follower, user = user_to_follow)
+            delete_follow = Followers.objects.get(follower = follower, followed = user_to_follow)
             delete_follow.delete()
         else:
-            new_follow = Followers.objects.create(follower = follower, user = user_to_follow)
+            new_follow = Followers.objects.create(follower = follower, followed = user_to_follow)
             new_follow.save()
 
         return redirect('/profile/'+user_to_follow)
     else:
         return redirect('/profile/'+user_to_follow)
-
+'''        
 
 
 
@@ -256,7 +272,7 @@ def search(request):
 @login_required(login_url='login')
 def comments_post(request):
     if request.method == 'POST':
-        user = request.user.username
+        user = request.user
         text = request.POST.get('text')
         post_id = request.POST.get('post_id', '')  
 
@@ -264,7 +280,7 @@ def comments_post(request):
         if post_id:
             try:
                 post = Post.objects.get(id=post_id)
-                new_comment = comments.objects.create(post=post, username=user, text=text)
+                new_comment = comments.objects.create(post=post, user=user, text=text)
                 new_comment.save()
                 
                 comments_list = comments.objects.filter(post=post)

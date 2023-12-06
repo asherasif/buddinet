@@ -23,7 +23,7 @@
     <div class="cols__container">
       <div class="left__col">
         <div class="img__container">
-          <img src="https://scontent.fkhi21-1.fna.fbcdn.net/v/t39.30808-1/361650012_6488201154606816_4125856854135565153_n.jpg?stp=dst-jpg_p160x160&_nc_cat=107&ccb=1-7&_nc_sid=5740b7&_nc_eui2=AeGW6CW1GccFr1SyGRGC2RZQzIXX_DZmxZzMhdf8NmbFnIX31ahN4t9lqZ2DUevWM6-IEqzCl2bVDtWBn5XPLwj1&_nc_ohc=ZFZoCTxO1rsAX_mQkoe&_nc_ht=scontent.fkhi21-1.fna&oh=00_AfArc1nIGW9lW9-Rza6evFqg2yX0QbxgkxSLDq2QZLc3yg&oe=656C1700" alt="a" />
+          <img src="{% static 'assets/blank-profile-pic.png' %}" alt="a" />
           <span></span>
         </div>
         <h2>{{user_profile.user.username}}</h2>
@@ -36,9 +36,10 @@
         </ul>
         <div class="content">
           <p>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam
-            erat volutpat. Morbi imperdiet, mauris ac auctor dictum, nisl
-            ligula egestas nulla.
+            Hello There, I am new to BuddiNet. A revolutionary take
+            on how social media is done. Follow my profile to see 
+            how my life goes.
+            Kudos on your journey. 
           </p>
           <ul>
             <li><i class="fab fa-twitter"></i></li>
@@ -72,7 +73,7 @@
           {% for post in user_posts reversed %}
             <div class="post-container {% if forloop.first %} first-post{% endif %}">
               <div class="post-header">
-                <img class="profile-pic" src="https://scontent.fkhi21-1.fna.fbcdn.net/v/t39.30808-1/361650012_6488201154606816_4125856854135565153_n.jpg?stp=dst-jpg_p160x160&_nc_cat=107&ccb=1-7&_nc_sid=5740b7&_nc_eui2=AeGW6CW1GccFr1SyGRGC2RZQzIXX_DZmxZzMhdf8NmbFnIX31ahN4t9lqZ2DUevWM6-IEqzCl2bVDtWBn5XPLwj1&_nc_ohc=ZFZoCTxO1rsAX_mQkoe&_nc_ht=scontent.fkhi21-1.fna&oh=00_AfArc1nIGW9lW9-Rza6evFqg2yX0QbxgkxSLDq2QZLc3yg&oe=656C1700" alt="Profile Picture" />
+                <img class="profile-pic" src=" "alt="Profile Picture" />
                 <div class="username">{{user_profile.user.username}}</div>
               </div>
               <img class="post-image" src="{{post.image.url}}" alt="Post Image" />
