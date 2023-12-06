@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comments - Post</title>
+    <link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="{% static 'assets/js/newsfeed.js'%}"></script>
+    <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+  </head>
+  <body>
+    <div class="middle">
+
+      <div class="feeds">
+        <div class="feed">
+            <div class="head">
+
+            </div>
+            <div class="user">
+                <div class="profile-pic">
+                    <img src="{% static 'assets/blank-profile-pic.png' %}" alt="">
+                </div>
+                <div class="info">
+                    <h3><a >{{ post.user }}</a></h3>
+                    <small>{{post.created_at}}</small>
+                </div>
+                <SPAN class="edit"><i class="uil uil-ellipsis-h"></i></SPAN>
+            </div>
+
+            <div class="photo">
+                <img src="{{post.image.url}}" alt="">
+            </div>
+
+            <div class="action-button">
+                <div class="interaction-button">
+                    <a href="/like_post?post_id={{post.id}}" class="button"><i
+                            class="uil uil-thumbs-up"></i></a>
+                    <a href="/comments_post?post_id={{post.id}}" class="button"><i class="uil uil-comment"></i></a>
+                </div>
+                <div class="bookmark">
+                    <a href="#" class="button"><i class="uil uil-share"></i></a>
+                </div>
+            </div>
+
+            <div class="liked-by">
+
+                {% if post.no_of_likes == 0%}
+                <p><b>0 Likes</b></p>
+                {% elif post.no_of_likes == 1 %}
+                <p><b>1 Like</b></p>
+                {% else %}
+                <p><b>{{post.no_of_likes}} Likes</b></p>
+                {% endif %}
+
+
+            </div>
+
+            <div class="caption">
+                <p><b><a>{{ post.user }}</a></b>
+                    {{post.text}}
+            </div>            
+        </div>
+    </div>
+
+
+
+
+      <div class="feeds">
+          {% for comm in comments_list reversed %}
+          <div class="feed">   
+              <div class="user">
+                  <div class="profile-pic">
+                      <img src="{% static 'assets/blank-profile-pic.png' %}" alt="A">
+                  </div>
+                  <div class="info">
+                      <h3><a href="/profile/{{users.user}}">{{comm.username}}</a></h3>
+                  </div>
+
+                  <div class="caption">
+                      <p><b>{{comm.text}}</b></p>
+                  </div>
+              </div>  
+          </div>
+          {% endfor %}     
+      </div>
+  </div>
+  </body>
+</html>

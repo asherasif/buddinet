@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile,Post,LikePost,Followers
+from .models import UserProfile,Post,LikePost,Followers,comments
 # Register your models here.
 
 
@@ -19,10 +19,15 @@ class LikePostAdmin(admin.ModelAdmin):
 
 class FollowersAdmin(admin.ModelAdmin):
     list_display = ('connection_id','follower','user')
-    search_fields = ('connection_id','follower','user')       
+    search_fields = ('connection_id','follower','user')
+
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ('comment_id','post_id','text','username')
+    search_fields = ('comment_id','post_id','username','text')            
 
 
 admin.site.register(UserProfile,UserProfileAdmin)
 admin.site.register(Post,PostAdmin)
 admin.site.register(LikePost,LikePostAdmin)
 admin.site.register(Followers,FollowersAdmin)
+admin.site.register(comments,CommentsAdmin)

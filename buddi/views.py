@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User,auth
 from django.contrib import messages
-from .models import UserProfile,Post,LikePost,Followers
+from .models import UserProfile,Post,LikePost,Followers,comments
 from django.contrib.auth.decorators import login_required
 from itertools import chain
 import random
@@ -20,7 +20,8 @@ def newsfeed(request):
     user_follow_list = list(user_follow_list)
     user_follow_list.append(request.user.username)
     # Fetch posts from the users the current user is following
-    feed_lists = Post.objects.filter(user__username__in=user_follow_list)
+    feed_lists = Post.objects.filter(user__username__in=user_follow_list).prefetch_related('comments1')
+
     # Order the posts by timestamp or any other criteria you desire
     feed_lists = feed_lists.order_by('created_at')
 
@@ -50,10 +51,15 @@ def newsfeed(request):
         username_profile_list.append(profiles)
 
 
-    suggestions_list = list(chain(*username_profile_list)) 
+    suggestions_list = list(chain(*username_profile_list))
 
 
-    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists,'suggestions_list': suggestions_list[:3]})
+    #Comments on Post
+    user_posts = Post.objects.filter(user=request.user)
+    comments_list = comments.objects.filter(post__in=user_posts).order_by('post__created_at')
+
+
+    return render(request, 'newsfeed.html', {'user_profile': user_profile, 'posts': feed_lists,'suggestions_list': suggestions_list[:3],'comments_list':comments_list})
 
 
 @login_required(login_url='login')
@@ -245,3 +251,27 @@ def search(request):
        username_profile_list = list(chain(*username_profile_list))     
 
     return render(request,'search.html',{'user_profile': user_profile,'username_profile_list': username_profile_list})
+
+
+@login_required(login_url='login')
+def comments_post(request):
+    if request.method == 'POST':
+        user = request.user.username
+        text = request.POST.get('text')
+        post_id = request.POST.get('post_id', '')  
+
+       
+        if post_id:
+            try:
+                post = Post.objects.get(id=post_id)
+                new_comment = comments.objects.create(post=post, username=user, text=text)
+                new_comment.save()
+                
+                comments_list = comments.objects.filter(post=post)
+                return render(request, 'comments.html', {'post':post,'comments_list': comments_list})
+
+            except Post.DoesNotExist:
+                
+                messages.error(request, 'Post does not exist.')
+                return redirect('newsfeed')
+

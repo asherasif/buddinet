@@ -12,5 +12,6 @@ urlpatterns = [
     path('profile/<slug:pk>',views.profile,name='profile'),
     path('follow',views.follow,name='follow'),
     path('search',views.search,name='search'),
+    path('comments_post',views.comments_post,name="comments_post")
 ]
 
